@@ -16,17 +16,17 @@ class IndexPriceGetter:
     """
     def __init__(self):
         self.clients = {
-            Exchanges.BINANCE: ccxt.binance(),
-            Exchanges.BITFINEX: ccxt.bitfinex(),
-            Exchanges.BITSTAMP: ccxt.bitstamp(),
-            Exchanges.BITTREX: ccxt.bittrex(),
-            Exchanges.COINBASE_PRO: ccxt.coinbasepro(),
-            Exchanges.FTX: ccxt.ftx(),
-            Exchanges.GATE: ccxt.gateio(),
-            Exchanges.GEMINI: ccxt.gemini(),
+            Exchanges.BINANCE: ccxt.binance({"enableRateLimit": True}),
+            Exchanges.BITFINEX: ccxt.bitfinex({"enableRateLimit": True}),
+            Exchanges.BITSTAMP: ccxt.bitstamp({"enableRateLimit": True}),
+            Exchanges.BITTREX: ccxt.bittrex({"enableRateLimit": True}),
+            Exchanges.COINBASE_PRO: ccxt.coinbasepro({"enableRateLimit": True}),
+            Exchanges.FTX: ccxt.ftx({"enableRateLimit": True}),
+            Exchanges.GATE: ccxt.gateio({"enableRateLimit": True}),
+            Exchanges.GEMINI: ccxt.gemini({"enableRateLimit": True}),
             Exchanges.HUOBI: ccxt.huobi(),
-            Exchanges.KRAKEN: ccxt.kraken(),
-            Exchanges.OKEX: ccxt.okex(),
+            Exchanges.KRAKEN: ccxt.kraken({"enableRateLimit": True}),
+            Exchanges.OKEX: ccxt.okex({"enableRateLimit": True}),
         }
 
     async def cleanup(self):
