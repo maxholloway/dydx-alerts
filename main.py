@@ -84,13 +84,11 @@ async def get_all_users_positions(user_ids) -> Dict[str, Dict[str, float]]:
         *[get_user_positions(user_id) for user_id in user_ids] # list of coroutines
     )
     user_to_positions = {user_ids[i]: user_positions[i] for i in range(len(user_ids))}
-    return user_to_positions # DONE: start async task, but don't await it
+    return user_to_positions
 
 async def get_user_equity(user_id) -> float:
-    dydx_api_credentials = get_api_credentials(user_id, ApiNames.DYDX, DEFAULT_DYDX_API_KEY_CONFIG_ID)
-    # TODO: implement API call to get collateral, given the user's dYdX API credentials
-    await asyncio.sleep(.2)
-    return 420.69
+    client = get_dydx_client(user_id)
+    return float(client.private.get_accounts().data["accounts"][0]["equity"])
 
 async def get_all_users_equity(user_ids) -> Dict[str, float]:
     user_ids = list(user_ids)

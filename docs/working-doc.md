@@ -8,11 +8,11 @@
     * [ ] Build `get_all_index_prices()`
         * [ ] Build `get_stablecoin_prices()`
         * [ ] Build `get_index_price(perp_market, stablecoin_prices)`
-    * [ ] Build `get_all_users_positions(user_ids)`
-        * [ ] Build `get_user_positions(user_id)`
-    * [ ] Build `get_all_users_equity(user_ids)`
-        * [ ] Build `get_user_equity(user_id)`
-    * [ ] Build `handle_messaging()`
-        * [ ] Build a message constructor that checks collateralization and constructs a message if it's below a threshold. Modify `messenger_blobs.json` to use this event trigger message. This includes building `get_message_generator(event_trigger_config)`.
-        * [ ] Build `get_message_platform(message_platform_config)`; build a simple message platform (e.g. 'slack') that implements credential setting and message sending. Modify `messenger_blobs.json` and `api_credentials.json` to use this message platform and its api credentials.
+    * [ x ] Build `get_all_users_positions(user_ids)`
+        * [ x ] Build `get_user_positions(user_id)`
+    * [ x ] Build `get_all_users_equity(user_ids)`
+        * [ x ] Build `get_user_equity(user_id)`
+    * [ x ] Build `handle_messaging()`
+        * [ x ] Build a message constructor that checks collateralization and constructs a message if it's below a threshold. Modify `messenger_blobs.json` to use this event trigger message. This includes building `get_message_generator(event_trigger_config)`.
+        * [ x ] Build `get_message_platform(message_platform_config)`; build a simple message platform (e.g. 'slack') that implements credential setting and message sending. Modify `messenger_blobs.json` and `api_credentials.json` to use this message platform and its api credentials.
     * [ ] Get a working run with manual config setting.
