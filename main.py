@@ -6,26 +6,10 @@ from dydx3 import Client
 from dydx3.constants import API_HOST_ROPSTEN
 from dydx3.constants import NETWORK_ID_ROPSTEN
 
-from constants import ApiNames, PERP_MARKETS, DEFAULT_DYDX_API_KEY_CONFIG_ID
+from constants import ApiNames, DEFAULT_DYDX_API_KEY_CONFIG_ID
 from event_trigger import get_message_generator
+from index_price import get_all_index_prices
 from message_platform import get_message_platform
-
-async def get_stablecoin_prices():
-    # TODO: get the stablecoin prices needed for dYdX
-    return
-
-async def get_index_price(perp_name: str, stable_coin_prices) -> float:
-    # TODO: get the index price using the dYdX API
-    await asyncio.sleep(.5)
-    return 5_000
-
-async def get_all_index_prices() -> Dict[str, float]:
-    stablecoin_prices = await get_stablecoin_prices()
-    index_prices = await asyncio.gather(
-        *[get_index_price(perp_market, stablecoin_prices) for perp_market in PERP_MARKETS]
-    )
-    market_to_index_price = {PERP_MARKETS[i]: index_prices[i] for i in range(len(PERP_MARKETS))} # TODO: start async task, but don't await it
-    return market_to_index_price
 
 def get_messenger_blobs() -> List[Dict[str, Any]]:
     """
