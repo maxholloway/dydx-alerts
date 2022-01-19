@@ -1,22 +1,31 @@
+import asyncio
 import json
 from typing import Any, Dict, List
+
+from dydx3 import Client
+from dydx3.constants import API_HOST_ROPSTEN
+from dydx3.constants import NETWORK_ID_ROPSTEN
 
 from constants import ApiNames, PERP_MARKETS, DEFAULT_DYDX_API_KEY_CONFIG_ID
 from event_trigger import get_message_generator
 from message_platform import get_message_platform
 
 async def get_stablecoin_prices():
+    # TODO: get the stablecoin prices needed for dYdX
     return
 
 async def get_index_price(perp_name: str, stable_coin_prices) -> float:
-    return # get the index price using the dYdX API
+    # TODO: get the index price using the dYdX API
+    await asyncio.sleep(.5)
+    return 5_000
 
 async def get_all_index_prices() -> Dict[str, float]:
-    stablecoin_prices = await get_stablecoin_prices()    
-    index_prices = {}
-    for perp_market in PERP_MARKETS:
-        index_prices[perp_market] = start(get_index_price(perp_market, stablecoin_prices)) # TODO: start async task, but don't await it
-    return index_prices
+    stablecoin_prices = await get_stablecoin_prices()
+    index_prices = await asyncio.gather(
+        *[get_index_price(perp_market, stablecoin_prices) for perp_market in PERP_MARKETS]
+    )
+    market_to_index_price = {PERP_MARKETS[i]: index_prices[i] for i in range(len(PERP_MARKETS))} # TODO: start async task, but don't await it
+    return market_to_index_price
 
 def get_messenger_blobs() -> List[Dict[str, Any]]:
     """
@@ -44,28 +53,63 @@ def get_api_credentials(user_id, platform_name, message_platform_api_key_config_
     # TODO: potentially replace with an encrypted database
     with open("api_credentials.json", "r") as api_credentials_file:
         all_api_credentials = json.load(api_credentials_file)
-    return all_api_credentials[user_id][platform_name][message_platform_api_key_config_id]
+    all_api_credentials = all_api_credentials[user_id][platform_name][message_platform_api_key_config_id]
+    return all_api_credentials
+
+def get_dydx_api_credentials(user_id):
+    api_credentials = get_api_credentials(user_id, ApiNames.DYDX, DEFAULT_DYDX_API_KEY_CONFIG_ID)
+    return {
+        "key": api_credentials["key"],
+        "secret": api_credentials["secret"],
+        "passphrase": api_credentials["passphrase"]
+    }
+
+def get_dydx_client(user_id):
+    dydx_api_credentials = get_dydx_api_credentials(user_id)
+    return Client(
+        host=API_HOST_ROPSTEN,
+        network_id=NETWORK_ID_ROPSTEN,
+        api_key_credentials=dydx_api_credentials
+    )
 
 async def get_user_positions(user_id) -> Dict[str, float]:
-    dydx_api_credentials = get_api_credentials(user_id, ApiNames.DYDX, DEFAULT_DYDX_API_KEY_CONFIG_ID)
-    # TODO: implement API calls to get open positions, given the user's dYdX API credentials
-    return
-
+    client = get_dydx_client(user_id)
+    all_position_data = client.private.get_positions().data["positions"]
+    positions = {pos["market"]: float(pos["size"]) for pos in all_position_data}
+    return positions
+    
 async def get_all_users_positions(user_ids) -> Dict[str, Dict[str, float]]:
-    user_to_positions = {}
-    for user_id in user_ids:
-        user_to_positions[user_id] = start(get_user_positions(user_id)) # TODO: start async task, but don't await it
-    return user_to_positions
+    user_ids = list(user_ids)
+    user_positions = await asyncio.gather(
+        *[get_user_positions(user_id) for user_id in user_ids] # list of coroutines
+    )
+    user_to_positions = {user_ids[i]: user_positions[i] for i in range(len(user_ids))}
+    return user_to_positions # DONE: start async task, but don't await it
 
-async def handle_messaging(user_id, index_prices, user_positions, message_platform_config, event_trigger_config):
+async def get_user_equity(user_id) -> float:
+    dydx_api_credentials = get_api_credentials(user_id, ApiNames.DYDX, DEFAULT_DYDX_API_KEY_CONFIG_ID)
+    # TODO: implement API call to get collateral, given the user's dYdX API credentials
+    await asyncio.sleep(.2)
+    return 420.69
+
+async def get_all_users_equity(user_ids) -> Dict[str, float]:
+    user_ids = list(user_ids)
+    user_equities = await asyncio.gather(
+        *[get_user_equity(user_id) for user_id in user_ids] # list of coroutines
+    )
+    user_to_equity = {user_ids[i]: user_equities[i] for i in range(len(user_ids))}
+    return user_to_equity
+
+
+async def handle_messaging(user_id, index_prices, user_equity, user_positions, message_platform_config, event_trigger_config):
     """
     * Create an event trigger object from the event trigger config.
     * Check, via builtin method of the trigger object, if the account meets criteria to send message. If it does not meet the criteria, return the empty string. If it does meet the criteria, return the message to be sent.
     * If the message is non-empty, then create a message platform object (via its config). With that object, invoke a "send_message" method.
     """
     message_generator = get_message_generator(event_trigger_config)
-    message = message_generator(index_prices, user_positions)
-    if message != "":
+    message = message_generator(index_prices, user_equity, user_positions)
+    if message:
         # get message platform API credentials
         message_platform_name = message_platform_config["message_platform"]
         message_platform_api_key_config_id = message_platform_config["api_key_config_id"]
@@ -74,21 +118,27 @@ async def handle_messaging(user_id, index_prices, user_positions, message_platfo
         message_platform = get_message_platform(message_platform_config)
         message_platform.set_api_credentials(message_api_credentials)
         await message_platform.send_message(message)
-    return
 
 async def main():
     index_prices = await get_all_index_prices()
     messenger_blobs = get_messenger_blobs()
     user_ids = get_all_user_ids(messenger_blobs)
-    all_positions = await get_all_users_positions(user_ids)
+    (all_positions, all_equity) = await asyncio.gather(
+        get_all_users_positions(user_ids),
+        get_all_users_equity(user_ids)
+    )
 
+    message_producers = [] # a list of coroutines
     for messenger_blob in messenger_blobs:
         user_id = messenger_blob["user_id"]
         user_positions = all_positions[user_id]
+        user_equity = all_equity[user_id]
         message_platform_config = messenger_blob["message_platform_config"]
         event_trigger_config = messenger_blob["event_trigger_config"]
-        start(handle_messaging(user_id, index_prices, user_positions, message_platform_config, event_trigger_config)) # TODO: start async task, but don't await it
-    return
+        message_producers.append(
+            handle_messaging(user_id, index_prices, user_equity, user_positions, message_platform_config, event_trigger_config)
+        )
+    await asyncio.gather(*message_producers) # DONE: start async task, but don't await it
 
 if __name__ == "__main__":
-    main() # TODO: figure out how to run the outermost asyncio event loop
+    asyncio.run(main())

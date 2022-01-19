@@ -1,0 +1,12 @@
+{
+    "maintenance": {
+        "BTC-USD": "0.03",
+        "ETH-USD": "0.03",
+        "MATIC-USD": "0.05"
+    },
+    "opening": {
+        "BTC-USD": "0.05",
+        "ETH-USD": "0.05",
+        "MATIC-USD": "0.10"
+    }
+}

@@ -1,2 +1,6 @@
+# dev data + secrets
 api_credentials.json
 messenger_blobs.json
+
+venv/
+__pycache__/
