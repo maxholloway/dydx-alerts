@@ -9,7 +9,11 @@ import ccxt.async_support as ccxt
 
 from constants import Exchanges
 
+# Base Clients
 class BaseClient(ABC):
+    """
+    Base exchange client class that all exchange clients should implement.
+    """
     @abstractmethod
     def __init__(self):
         pass
@@ -19,9 +23,15 @@ class BaseClient(ABC):
         pass
 
     async def close(self):
+        """
+        The interface of this client should include this function
+        so that we can clean up the client when finished. This is
+        meant to be overridden in child classes when necessary, for
+        instance when closing a ccxt client.
+        """
         return await asyncio.sleep(0)
 
-class CcxtBaseClient:
+class CcxtBaseClient(BaseClient):
     def __init__(self, exchange_name):
         if exchange_name == Exchanges.BINANCE: 
             self.client = ccxt.binance({"enableRateLimit": True})
@@ -59,7 +69,35 @@ class CcxtBaseClient:
 
     async def close(self):
         return await self.client.close()
-    
+
+class ManualClient(BaseClient):
+    """
+    Client class that makes manual requests to the exchange.
+    This requires rate-limiting.
+
+    All child classes must implement `get_index_price_no_rate_limit`, which
+    can make an arbitrarily large number of aiohttp calls.
+    """
+    def __init__(self, requests_per_interval: float, interval_len: float):
+        """
+        requests_per_interval: number of requests that can occur in a given time interval
+        interval_len: number of seconds the rate limit applies
+
+        for example, requests_per_interval=20 interval_len=2 would mean we can make 20 requests per 2 seconds
+        """
+        self.rate_limiter = AsyncLimiter(requests_per_interval, interval_len)
+
+    async def get_index_price(self, market: str) -> float:
+        index_price = None
+        async with self.rate_limiter:
+            index_price = await self.get_index_price_no_rate_limit(market)
+        return index_price
+
+    @abstractmethod
+    async def get_index_price_no_rate_limit(self, market: str) -> float:
+        pass
+
+# Exchange Clients
 class BinanceClient(CcxtBaseClient):
     def __init__(self):
         super(BinanceClient, self).__init__(Exchanges.BINANCE)
@@ -100,33 +138,33 @@ class KrakenClient(CcxtBaseClient):
     def __init__(self):
         super(KrakenClient, self).__init__(Exchanges.KRAKEN)
 
-class OkexClient(BaseClient):
+class OkexClient(ManualClient):
     def __init__(self):
-        self.rate_limiter = AsyncLimiter(10, 2) # should allow 20 / 2, but the okex api sucks and it over-flags on the rate limit
+        super(OkexClient, self).__init__(10, 2) # should allow 20 requests / 2 seconds, but the okex api sucks and it over-flags on the rate limit
 
-    async def get_index_price(self, market: str) -> float:
+    async def get_index_price_no_rate_limit(self, market: str) -> float:
         base, quote = market.split("/")
 
         index_price = None
         request_url = f"https://www.okex.com/api/v5/market/ticker?instId={base}-{quote}-SWAP"
         async with aiohttp.ClientSession() as session:
-            async with self.rate_limiter:
-                async with session.get(request_url) as resp:
-                    if resp.status != 200:
-                        return -1
-                    
-                    resp_dict = json.loads(await resp.text())
-                    pair_data = resp_dict["data"][0]
-                    index_price_inputs = pair_data["bidPx"], pair_data["askPx"], pair_data["last"]
-                    index_price_inputs = [float(p) for p in index_price_inputs]
-                    index_price = median(index_price_inputs)
+            async with session.get(request_url) as resp:
+                print(resp.status)
+                if resp.status != 200:
+                    return -1
+                
+                resp_dict = json.loads(await resp.text())
+                pair_data = resp_dict["data"][0]
+                index_price_inputs = pair_data["bidPx"], pair_data["askPx"], pair_data["last"]
+                index_price_inputs = [float(p) for p in index_price_inputs]
+                index_price = median(index_price_inputs)
         return index_price
 
 if __name__ == "__main__":
     async def tst():
         coros = []
         client = OkexClient()
-        for i in range(30):
+        for i in range(100):
             coros.append(client.get_index_price("BTC/USDT"))
         return await asyncio.gather(*coros)
     
