@@ -6,6 +6,7 @@ from typing import Dict
 import ccxt.async_support as ccxt
 
 from constants import PERP_MARKETS, PERP_MARKET_TO_SOURCE, Exchanges
+from exchange_clients import BinanceClient, BitFinexClient, BitStampClient, BitTrexClient, CoinbaseProClient, FtxClient, GateClient, GeminiClient, HuobiClient, KrakenClient, OkexClient
 
 def tuple_list_to_dict(tuple_list):
     return {k: v for (k, v) in tuple_list}
@@ -16,17 +17,17 @@ class IndexPriceGetter:
     """
     def __init__(self):
         self.clients = {
-            Exchanges.BINANCE: ccxt.binance({"enableRateLimit": True}),
-            Exchanges.BITFINEX: ccxt.bitfinex({"enableRateLimit": True}),
-            Exchanges.BITSTAMP: ccxt.bitstamp({"enableRateLimit": True}),
-            Exchanges.BITTREX: ccxt.bittrex({"enableRateLimit": True}),
-            Exchanges.COINBASE_PRO: ccxt.coinbasepro({"enableRateLimit": True}),
-            Exchanges.FTX: ccxt.ftx({"enableRateLimit": True}),
-            Exchanges.GATE: ccxt.gateio({"enableRateLimit": True}),
-            Exchanges.GEMINI: ccxt.gemini({"enableRateLimit": True}),
-            Exchanges.HUOBI: ccxt.huobi(),
-            Exchanges.KRAKEN: ccxt.kraken({"enableRateLimit": True}),
-            Exchanges.OKEX: ccxt.okex({"enableRateLimit": True}),
+            Exchanges.BINANCE: BinanceClient(),
+            Exchanges.BITFINEX: BitFinexClient(),
+            Exchanges.BITSTAMP: BitStampClient(),
+            Exchanges.BITTREX: BitTrexClient(),
+            Exchanges.COINBASE_PRO: CoinbaseProClient(),
+            Exchanges.FTX: FtxClient(),
+            Exchanges.GATE: GateClient(),
+            Exchanges.GEMINI: GeminiClient(),
+            Exchanges.HUOBI: HuobiClient(),
+            Exchanges.KRAKEN: KrakenClient(),
+            Exchanges.OKEX: OkexClient(),
         }
 
     async def cleanup(self):
@@ -37,13 +38,7 @@ class IndexPriceGetter:
 
     async def _get_index_price_single_exchange(self, exchange_name, market):
         client = self._get_client(exchange_name)
-        data = await client.fetch_ticker(market)
-
-        price_points = list(filter(
-            lambda x: x != None,
-            [data["bid"], data["ask"], data["last"]]
-        ))
-        return median(price_points)
+        return await client.get_index_price(market)
 
     async def _get_index_price_many_exchanges(self, exchange_name_to_market: Dict[str, str], usdt_price=None):
         """Gets the index price of the given assets, given multiple exchange with relevant pairs.
@@ -128,7 +123,7 @@ class IndexPriceGetter:
                 tuple_list_to_dict(source_info), usdt_price) 
                 for source_info in PERP_MARKET_TO_SOURCE.values()]
         )
-        print("index prices", index_prices)
+
         market_to_index_price = {PERP_MARKETS[i]: index_prices[i] for i in range(len(PERP_MARKETS))}
         import json
         print("market to index prices", json.dumps(market_to_index_price))

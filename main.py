@@ -8,7 +8,7 @@ from dydx3.constants import NETWORK_ID_ROPSTEN
 
 from constants import ApiNames, DEFAULT_DYDX_API_KEY_CONFIG_ID
 from event_trigger import get_message_generator
-from index_price import get_all_index_prices
+from index_price import IndexPriceGetter
 from message_platform import get_message_platform
 
 def get_messenger_blobs() -> List[Dict[str, Any]]:
@@ -102,7 +102,7 @@ async def handle_messaging(user_id, index_prices, user_equity, user_positions, m
         await message_platform.send_message(message)
 
 async def main():
-    index_prices = await get_all_index_prices()
+    index_prices = await IndexPriceGetter.get_all_index_prices()
     messenger_blobs = get_messenger_blobs()
     user_ids = get_all_user_ids(messenger_blobs)
     (all_positions, all_equity) = await asyncio.gather(
@@ -120,7 +120,7 @@ async def main():
         message_producers.append(
             handle_messaging(user_id, index_prices, user_equity, user_positions, message_platform_config, event_trigger_config)
         )
-    await asyncio.gather(*message_producers) # DONE: start async task, but don't await it
-
+    await asyncio.gather(*message_producers)
+    
 if __name__ == "__main__":
     asyncio.run(main())
