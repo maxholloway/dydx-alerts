@@ -3,7 +3,6 @@ import json
 import requests
 from typing import Any, Dict
 
-
 class BaseMessagePlatform(ABC):
     @abstractmethod
     async def send_message(self, message):
@@ -47,7 +46,10 @@ def get_message_platform(message_platform_config) -> BaseMessagePlatform:
 
 if __name__ == "__main__":
     import asyncio
-    WEBHOOK_URL = ""
+    with open("api_credentials.json", "r") as creds_file:
+        creds = json.load(creds_file)
+        WEBHOOK_URL = creds["user_id1"]["slack"]["0"]["webhook_url"]
+        
     slack_msg_plat = SlackMessagePlatform({})
     slack_msg_plat.set_api_credentials({"webhook_url": WEBHOOK_URL})
     asyncio.run(slack_msg_plat.send_message("Hi there"))

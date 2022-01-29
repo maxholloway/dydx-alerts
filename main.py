@@ -101,8 +101,43 @@ async def handle_messaging(user_id, index_prices, user_equity, user_positions, m
         message_platform.set_api_credentials(message_api_credentials)
         await message_platform.send_message(message)
 
+def _get_index_prices_fixture():
+    # TODO: delete
+    return {
+        "ETH-USD": 2593.55,
+        "BTC-USD": 37921.075,
+        "LINK-USD": 16.35201933474131,
+        "AAVE-USD": 154.39,
+        "UNI-USD": 11.028781018963784,
+        "SUSHI-USD": 4.1783267472027035,
+        "SOL-USD": 95.3999566108624,
+        "YFI-USD": 24248.986831176626,
+        "1INCH-USD": 1.7063585877797869,
+        "AVAX-USD": 72.58099999999999,
+        "SNX-USD": 5.0195,
+        "CRV-USD": 3.026575,
+        "UMA-USD": 5.970226811471518,
+        "DOT-USD": 18.664860798881538,
+        "DOGE-USD": 0.142449,
+        "MATIC-USD": 1.7026,
+        "MKR-USD": 1931.808088700111,
+        "FIL-USD": 20.276671844110993,
+        "ADA-USD": 1.056,
+        "ATOM-USD": 28.887299815397128,
+        "COMP-USD": 123.58420398557291,
+        "LTC-USD": 110.5575,
+        "EOS-USD": 2.3442664844664938,
+        "BCH-USD": 297.01,
+        "XMR-USD": 152.12111750294875,
+        "ZEC-USD": 94.96561078851846,
+        "ALGO-USD": 0.9768388509305197
+    }
+
 async def main():
-    index_prices = await IndexPriceGetter.get_all_index_prices()
+    # TODO: replace index prices fixture with actual index price getter; only use _get_index_prices_fixture for testing!
+    # index_prices = await IndexPriceGetter.get_all_index_prices()
+    index_prices = _get_index_prices_fixture()
+
     messenger_blobs = get_messenger_blobs()
     user_ids = get_all_user_ids(messenger_blobs)
     (all_positions, all_equity) = await asyncio.gather(
