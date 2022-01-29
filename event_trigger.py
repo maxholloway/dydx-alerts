@@ -31,7 +31,6 @@ def make_below_thresh_event_trigger(config_options):
             collat_ratio_requirement = float(maintenance_colalteral_ratios[market_name])
             account_margin_requirement += market_open_interest * collat_ratio_requirement
         
-        print("open interest", account_open_interest)
         if account_open_interest == 0:
             # never alert when there's no open interest
             return ""
