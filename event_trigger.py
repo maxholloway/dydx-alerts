@@ -39,7 +39,7 @@ def make_below_thresh_event_trigger(config_options):
         trigger_collateral_pct = float(config_options["collateral_trigger_pct"])
         if account_collateral_pct < trigger_collateral_pct:
             approx_liquidation_pct = 100 * (account_margin_requirement / account_open_interest)
-            return f"ALERT: Account is {account_collateral_pct}% collateralized and has ${user_equity} of equity. It will be liquidated when it goes below approximately {approx_liquidation_pct}% collateralization."
+            return f"Account is {account_collateral_pct:.2f}% collateralized and has ${user_equity:,.2f} of equity. It will be liquidated when it goes below approximately {approx_liquidation_pct:.2f}% collateralization."
         else:
             return ""
     
