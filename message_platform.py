@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import aiohttp
 import json
+import os
 import requests
 import smtplib
 import ssl
@@ -19,19 +20,16 @@ class BaseMessagePlatform(ABC):
         return
 
 class SlackMessagePlatform(BaseMessagePlatform):
-    async def send_message(self, message):
-        # TODO: use aiohttp
-        response = requests.post(
-            url=self.api_credentials["webhook_url"],
-            data=json.dumps({"text": message}),
-            headers={'Content-Type': 'application/json'}
-        )
-
-        if response.status_code != 200:
-            raise ValueError(
-                'Request to slack returned an error %s, the response is:\n%s'
-                % (response.status_code, response.text)
-            )
+    async def send_message(self, message: str):
+        request_url = self.api_credentials["webhook_url"]
+        data = json.dumps({"text": message})
+        headers = {'Content-Type': 'application/json'}
+        async with aiohttp.ClientSession() as session:
+            async with session.post(request_url, data=data, headers=headers) as resp:
+                if resp.status != 200:
+                    print("Slack API error occurred.")
+                    print(await resp.text())
+                    return -1
         
         return
 
@@ -67,7 +65,18 @@ class TelegramMessagePlatform(BaseMessagePlatform):
                 resp_dict = json.loads(await resp.text())
 
 class DiscordMessagePlatform(BaseMessagePlatform):
-    pass
+    async def send_message(self, message):
+        request_url = os.path.join(self.api_credentials["webhook_url"], "slack")
+        data = json.dumps({"text": message})
+        headers = {'Content-Type': 'application/json'}
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(request_url, data=data, headers=headers) as resp:
+                if resp.status != 200:
+                    print("Discord API error occurred.")
+                    print(await resp.text())
+                    return -1        
+        return
 
 def get_message_platform(message_platform_config) -> BaseMessagePlatform:
     if message_platform_config["message_platform"] == "slack":
@@ -76,14 +85,16 @@ def get_message_platform(message_platform_config) -> BaseMessagePlatform:
         return EmailMessagePlatform(message_platform_config["platform_specific_config"])
     elif message_platform_config["message_platform"] == "telegram":
         return TelegramMessagePlatform(message_platform_config["platform_specific_config"])
+    elif message_platform_config["message_platform"] == "discord":
+        return DiscordMessagePlatform(message_platform_config["platform_specific_config"])
     else:
         raise ValueError(f"Unknown message platform {message_platform_config['message_platform']}.")
 
 if __name__ == "__main__":
     import asyncio
     with open("api_credentials.json", "r") as creds_file:
-        creds = json.load(creds_file)["user_id1"]["telegram"]["0"]
+        creds = json.load(creds_file)["user_id1"]["slack"]["0"]
         
-    message_platform = TelegramMessagePlatform({"telegram_chat_id": "-789851131"})
+    message_platform = SlackMessagePlatform({})
     message_platform.set_api_credentials(creds)
-    asyncio.run(message_platform.send_message("Hi there"))
+    asyncio.run(message_platform.send_message("Testing out the waters!"))
