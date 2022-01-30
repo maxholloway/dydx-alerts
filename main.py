@@ -37,6 +37,8 @@ def get_api_credentials(user_id, platform_name, message_platform_api_key_config_
     # TODO: potentially replace with an encrypted database
     with open("api_credentials.json", "r") as api_credentials_file:
         all_api_credentials = json.load(api_credentials_file)
+    
+    # TODO: add error handling for missing credentials
     all_api_credentials = all_api_credentials[user_id][platform_name][message_platform_api_key_config_id]
     return all_api_credentials
 
