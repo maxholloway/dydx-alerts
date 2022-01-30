@@ -23,6 +23,7 @@ class BaseMessagePlatform(ABC):
         """
         pass
 
+
 class SlackMessagePlatform(BaseMessagePlatform):
     async def send_message(self, message: str):
         request_url = self.message_api_credentials["webhook_url"]
@@ -43,6 +44,7 @@ class SlackMessagePlatform(BaseMessagePlatform):
 
 class EmailMessagePlatform(BaseMessagePlatform):
     async def send_message(self, email_body):
+        # TODO: support general smtp servers, not just gmail.
         try:
             from_email_address, from_email_password = self.message_api_credentials["from_email_address"], self.message_api_credentials["from_email_password"]
             to_email_address = self.message_platform_config["to_email_address"]
@@ -62,6 +64,7 @@ class EmailMessagePlatform(BaseMessagePlatform):
             print(f"The following exception occured:\n{ex}")
             return False
 
+
 class TelegramMessagePlatform(BaseMessagePlatform):
     async def send_message(self, message: str):
         try:
@@ -78,6 +81,7 @@ class TelegramMessagePlatform(BaseMessagePlatform):
         except Exception as ex:
             print(f"The following exception occured:\n{ex}")
             return False
+
 
 class DiscordMessagePlatform(BaseMessagePlatform):
     async def send_message(self, message):
