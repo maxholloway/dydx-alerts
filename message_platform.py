@@ -35,58 +35,21 @@ class SlackMessagePlatform(BaseMessagePlatform):
         return
 
 class EmailMessagePlatform(BaseMessagePlatform):
-    async def send_message(self, message):
+    async def send_message(self, email_body):
+        # TODO: add error handling?
         from_email_address, from_email_password = self.api_credentials["from_email_address"], self.api_credentials["from_email_password"]
         to_email_address = self.message_platform_config["to_email_address"]
 
-        # smtp_server = "smtp.gmail.com"
-        # port = 587  # For starttls
-
-        # # Create a secure SSL context
-        # context = ssl.create_default_context()
-
-        # # Try to log in to server and send email
-        # try:
-        #     print("here 1")
-        #     server = smtplib.SMTP(smtp_server,port)
-        #     print("here 2")
-        #     server.ehlo() # Can be omitted
-        #     server.starttls(context=context) # Secure the connection
-        #     server.ehlo() # Can be omitted
-        #     server.login(from_email_address, from_email_password)
-            
-        #     message = f"Subject: dYdX Alert!\n{message}"
-
-            
-        #     server.sendmail(from_email_address, to_email_address, message)
-
-        # except Exception as e:
-        #     # Print any error messages to stdout
-        #     print(e)
-        # finally:
-        #     server.quit() 
-        # pass
-
         port = 587  # For starttls
         smtp_server = "smtp.gmail.com"
-        message = """\
-        Subject: Hi there
+        email_content = f"Subject: dYdX Alert\n\n{email_body}"
 
-        This message is sent from Python."""
-
-        print(0)
         context = ssl.create_default_context()
-        print(1)
-        server = smtplib.SMTP(smtp_server, port)
-        # with smtplib.SMTP('smtp.gmail.com:587') as server: # smtplib.SMTP('smtp.gmail.com', 587) as server:
-        print(2)
-        server.ehlo()  # Can be omitted
-        server.starttls(context=context)
-        server.ehlo()  # Can be omitted
-        server.login(from_email_address, from_email_password)
-        server.sendmail(from_email_address, to_email_address, message)
-        
-        server.close()
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.starttls(context=context)
+            server.login(from_email_address, from_email_password)
+            server.sendmail(from_email_address, to_email_address, email_content)
+        print(f"Mail sent with no errors. Email content:\n{email_content}")
 
 class TelegramMessagePlatform(BaseMessagePlatform):
     pass
@@ -105,10 +68,10 @@ def get_message_platform(message_platform_config) -> BaseMessagePlatform:
 if __name__ == "__main__":
     import asyncio
     with open("api_credentials.json", "r") as creds_file:
-        creds = json.load(creds_file)
-        WEBHOOK_URL = creds["user_id1"]["slack"]["0"]["webhook_url"]
+        creds = json.load(creds_file)["user_id1"]["email"]["0"]
         
-    slack_msg_plat = SlackMessagePlatform({})
-    slack_msg_plat.set_api_credentials({"webhook_url": WEBHOOK_URL})
-    asyncio.run(slack_msg_plat.send_message("Hi there"))
+    email_platform = EmailMessagePlatform({"to_email_address": "williamellignsworth@gmail.com"})
+    email_platform.set_api_credentials(creds)
+    asyncio.run(email_platform.send_message("Hi there"))
+    
     
