@@ -13,10 +13,10 @@ def get_message_generator(event_trigger_config):
 
     event_trigger_config: a dict object that corresponds to the `event_trigger_config` attribute of a messenger blob
     """
-    if event_trigger_config["type"] == EventTriggerTypes.BELOW_THRESH:
-        return make_below_thresh_event_trigger(event_trigger_config["options"])
+    if event_trigger_config["trigger"] == EventTriggerTypes.BELOW_THRESH:
+        return make_below_thresh_event_trigger(event_trigger_config["trigger_options"])
     else:
-        raise Exception(f"Invalid message action {event_trigger_config['type']}")
+        raise Exception(f"Invalid message action {event_trigger_config['trigger']}")
 
 def make_below_thresh_event_trigger(config_options):
     def below_thresh_event_trigger(index_prices: Dict[str, float], user_equity: float, user_positions: Dict[str, float]):        

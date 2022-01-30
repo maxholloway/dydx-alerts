@@ -1,0 +1,62 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "Messenger Blobs",
+    "description": "All of the user-defined commands that tell the bot when and where to send messages.",
+    "type": "array",
+    "items": {
+        "title": "Messenger Blob",
+        "description": "A single bot command that tells the the bot when and where to send messages.",
+        "type": "object",
+        "properties": {
+            "user_id": {
+                "description": "Unique user id that is used to retrieve API credentials. There is a one-to-one mapping from users to user ids.",
+                "type": "string"
+            },
+            "dydx_config": {
+                "description": "Configuration variables for dYdX.",
+                "type": "object",
+                "properties": {
+                    "environment": {
+                        "description": "What dYdX account do you want the bot to check? Mainnet or testnet?",
+                        "type": "string",
+                        "enum": ["mainnet", "testnet"]
+                    }
+                }
+            },
+            "message_platform_config": {
+                "description": "Config for the message platform and a reference to the api info to use with that platform.",
+                "type": "object",
+                "properties": {
+                    "message_platform": {
+                        "description": "Name of the messaging platform where messages should be sent.",
+                        "type": "string",
+                        "enum": ["slack", "email", "telegram", "discord"]
+                    },
+                    "api_key_config_id": {
+                        "description": "Reference to the API credential set that should be used.",
+                        "type": "integer"
+                    },
+                    "platform_specific_config": {
+                        "description": "Any configuration that is specific to the given platform. The fields in this object vary depending on the message platform.",
+                        "type": "object"
+                    }
+                }
+            },
+            "event_trigger_config": {
+                "description": "Config for the event trigger that will use dYdX account state to generate message.",
+                "type": "object",
+                "properties": {
+                    "trigger": {
+                        "description": "The type of event trigger to run.",
+                        "type": "string",
+                        "enum": ["below_thresh"]
+                    },
+                    "trigger_options": {
+                        "description": "Any configuration that is specific to the given event trigger. The fields in this object vary depending on the event trigger.",
+                        "type": "object"
+                    }
+                }
+            }
+        }
+    }
+}

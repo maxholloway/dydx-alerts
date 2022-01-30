@@ -115,7 +115,7 @@ def get_message_platform(message_platform_config, message_api_credentials) -> Ba
 if __name__ == "__main__":
     import asyncio
     with open("api_credentials.json", "r") as creds_file:
-        creds = json.load(creds_file)["user_id1"]["slack"]["0"]
+        creds = json.load(creds_file)["user_id1"]["slack"][0]
         
     message_platform = SlackMessagePlatform({}, creds)
     asyncio.run(message_platform.send_message("Testing out the waters!"))

@@ -3,4 +3,5 @@ api_credentials.json
 messenger_blobs.json
 
 venv/
+testvenv/
 __pycache__/
