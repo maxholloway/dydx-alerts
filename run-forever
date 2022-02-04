@@ -1,0 +1,9 @@
+#!/bin/bash
+
+SLEEP_SECONDS="10"
+while true; do
+    bash run
+    echo "Sleeping for ${SLEEP_SECONDS} seconds..."
+    sleep $SLEEP_SECONDS
+    echo "...finished sleeping"
+done
