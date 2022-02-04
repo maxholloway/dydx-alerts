@@ -125,8 +125,6 @@ class IndexPriceGetter:
         )
 
         market_to_index_price = {PERP_MARKETS[i]: index_prices[i] for i in range(len(PERP_MARKETS))}
-        import json
-        print("market to index prices", json.dumps(market_to_index_price))
         return market_to_index_price
 
     @staticmethod

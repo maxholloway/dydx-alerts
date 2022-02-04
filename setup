@@ -9,6 +9,6 @@ sudo apt install -y python3-venv
 
 # Create the virtual environment
 python3 -m venv venv
-source new-venv/bin/activate
+source venv/bin/activate
 pip3 install --upgrade pip
 pip3 install -r requirements.txt

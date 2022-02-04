@@ -3,5 +3,5 @@
 source venv/bin/activate
 
 echo "Beginning run..."
-python3 main.py
+python3 dydx_alerts/run.py
 echo "... finished run"

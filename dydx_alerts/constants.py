@@ -24,6 +24,19 @@ class Exchanges:
     KRAKEN = "KRAKEN"
     OKEX = "OKEX"
 
+COLLATERAL_REQUIREMENTS = {
+    "maintenance": {
+        "BTC-USD": "0.03",
+        "ETH-USD": "0.03",
+        "MATIC-USD": "0.05"
+    },
+    "opening": {
+        "BTC-USD": "0.05",
+        "ETH-USD": "0.05",
+        "MATIC-USD": "0.10"
+    }
+}
+
 # TODO: verify that all of this is right!
 PERP_MARKET_TO_SOURCE: Dict = {
     "ETH-USD": [
