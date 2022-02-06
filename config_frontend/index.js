@@ -34,7 +34,7 @@ function getDydxRunEnvironment () {
 }
 
 function getAllInputs () {
-    return {
+    allInputs = {
         dydxKey: document.getElementById("dydxKey").value,
         dydxSecret: document.getElementById("dydxSecret").value,
         dydxPassphrase: document.getElementById("dydxPassphrase").value,
@@ -47,6 +47,12 @@ function getAllInputs () {
         telegramChatId: document.getElementById("telegramChatId").value,
         maxLeverageTrigger: document.getElementById("maxLeverageTrigger").value
     }
+
+    Object.keys(allInputs).map(function(key, index) {
+        allInputs[key] = allInputs[key].replace('&amp;','&');
+      });
+
+    return allInputs
 }
 
 function checkCleanInputs (allInputs) {
@@ -156,7 +162,7 @@ function generateMessengerBlobJson (userInputsObject) {
     ) {
         var emailMessengerBlob = copyObject(baseMessengerBlob);
         emailMessengerBlob["message_platform_config"]["message_platform"] = "email";
-        emailMessengerBlob["platform_specific_config"] = {to_email_address: userInputsObject["toEmailAddress"]};
+        emailMessengerBlob["message_platform_config"]["platform_specific_config"] = {to_email_address: userInputsObject["toEmailAddress"]};
         allMessengerBlobs.push(emailMessengerBlob);
     }
 
@@ -203,11 +209,11 @@ function generateApiCredentialsJson (userInputsObject) {
     if ( allNonNull(dydxConfig) ) {
         // technically it should be impossible to get to this stage if the dydx config hasn't been set yet
         // so this conditional may be unnecessary. However, we're still defensive, just in case!
-        allApiCredentials["0"]["dydx"] = {
+        allApiCredentials["0"]["dydx"] = [{
             "key": userInputsObject["dydxKey"],
             "secret": userInputsObject["dydxSecret"],
             "passphrase": userInputsObject["dydxPassphrase"]
-        }
+        }]
     } else {
         throw Error("Got to generating api_credentials.json when dydx API config isn't fully filled out!")
     }
@@ -221,24 +227,24 @@ function generateApiCredentialsJson (userInputsObject) {
     if (
         allNonNull(emailConfig)
     ) {
-        allApiCredentials["0"]["email"] = {
+        allApiCredentials["0"]["email"] = [{
             "from_email_address": userInputsObject["senderEmailAddress"],
             "from_email_password": userInputsObject["senderEmailPassword"]
-        }
+        }]
     }
     
     // slack
     if (userInputsObject["slackWebhookUrl"] != "") {
-        allApiCredentials["0"]["slack"] = {
+        allApiCredentials["0"]["slack"] = [{
             "webhook_url": userInputsObject["slackWebhookUrl"]
-        }
+        }]
     }
 
     // discord
     if (userInputsObject["discordWebhookUrl"] != "") {
-        allApiCredentials["0"]["discord"] = {
+        allApiCredentials["0"]["discord"] = [{
             "webhook_url": userInputsObject["discordWebhookUrl"]
-        }
+        }]
     }
 
     // telegram
@@ -247,11 +253,13 @@ function generateApiCredentialsJson (userInputsObject) {
         userInputsObject["telegramChatId"]
     ]
     if (allNonNull(telegramConfig)) {
-        allApiCredentials["0"]["telegram"] = {
+        allApiCredentials["0"]["telegram"] = [{
             "bot_token": userInputsObject["telegramBotToken"],
             "telegram_chat_id": userInputsObject["telegramChatId"]
-        }
+        }]
     }
+
+    // console.log("allAPiCreds", allApiCredentials)
 
     return myStringify(allApiCredentials);
 }
