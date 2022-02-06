@@ -1,0 +1,7 @@
+#!/bin/bash
+
+source venv/bin/activate
+
+echo "Beginning run..."
+python3 dydx_alerts/run_forever.py
+echo "... finished run"

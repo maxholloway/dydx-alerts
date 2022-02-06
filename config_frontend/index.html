@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<head>
+    <title>dYdX Bot Config Generator</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+</head>
+
+<style>
+    .reg-box {
+        width: 300px;
+        border: 2px solid black;
+        padding: 50px;
+        margin: 20px;
+        height: 500px;
+        overflow-y: scroll;
+    }
+
+    .column-div {
+        display: flex;
+    }
+
+    .centered-div {
+        margin: 0 auto;
+    }
+
+    .json-box {
+        background-color: rgb(233, 233, 233);
+        height: 300px;
+        overflow-y: scroll;
+        overflow-x: scroll;
+    }
+
+    .p-json {
+        white-space: pre;
+    }
+
+</style>
+
+
+<body>
+
+<div>
+ <h1>Liquidation Bot Config Generator</h1>
+ <h3><i>Enter bot configuration in the pane on the left.</i></h3>
+
+</div>
+
+<div class="column-div centered-div">
+    <!-- Bot Parameters -->
+    <div class="reg-box">
+        <h2>Input Your Bot Parameters!</h2>
+
+        <div>
+            <!-- dYdX API Credentials -->
+            <div>
+                <h3>dYdX Bot Config (required)</h3>
+                
+                <label for="dydxKey">dYdX API Key (i.e. 'key'):</label>
+                <input type="text required" id="dydxKey"><br><br>
+
+                <label for="dydxSecret">dYdX API Secret (i.e. 'secret'):</label>
+                <input type="text required" id="dydxSecret"><br><br>
+
+                <label for="dydxPassphrase">dYdX API Passphrase (i.e. 'passphrase'):</label>
+                <input type="text required" id="dydxPassphrase"><br><br>
+
+                <h4>dYdX Run Environment:</h4>
+                <input type="radio" id="dydxEnvMainnet" name="dydxRunEnvironment">
+                <label for="dydxEnvMainnet">Ethereum Mainnet</label><br>
+                <input type="radio" id="dydxEnvTestnet" name="dydxRunEnvironment" checked="checked">
+                <label for="dydxEnvTestnet">Ropsten Testnet</label><br>
+
+            </div>
+        </div>
+
+        <div>
+            <!-- Email Params -->
+            <div>
+                <h3>Email Bot Config (only enter if you want to use an email bot)</h3>
+                
+                <label for="senderEmailAddress">Sender email address (currently use gmail):</label>
+                <input type="text" id="senderEmailAddress"><br><br>
+
+                <label for="senderEmailPassword">Sender email password:</label>
+                <input type="text" id="senderEmailPassword"><br><br>
+
+                <label for="toEmailAddress">Receiving email address (where to send email alerts):</label>
+                <input type="text" id="toEmailAddress"><br><br>
+
+            </div>
+        </div>
+
+        <div>
+            <!-- Slack Params -->
+            <div>
+                <h3>Slack Bot Config (only enter if you want to use an slack webhook bot)</h3>
+                
+                <label for="slackWebhookUrl">Slack webhook URL:</label>
+                <input type="text" id="slackWebhookUrl"><br><br>
+
+            </div>
+        </div>
+
+        <div>
+            <!-- Discord Params -->
+            <div>
+                <h3>Discord Bot Config (only enter if you want to use a discord webhook bot)</h3>
+                
+                <label for="discordWebhookUrl">Discord webhook URL:</label>
+                <input type="text" id="discordWebhookUrl"><br><br>
+
+            </div>
+        </div>
+
+        <div>
+            <!-- Telegram Params -->
+            <div>
+                <h3>Telegram Bot Config (only enter if you want to use a telegram bot)</h3>
+                
+                <label for="telegramBotToken">Telegram Bot Token:</label>
+                <input type="text" id="telegramBotToken"><br><br>
+
+                <label for="telegramChatId">Telegram Chat ID:</label>
+                <input type="text" id="telegramChatId"><br><br>
+
+            </div>
+        </div>
+
+        <div>
+            <div>
+                <h3>Bot Trigger Leverage (required)</h3>
+                    
+                <label for="maxLeverageTrigger">Maximum Leverage Trigger:</label>
+                <input type="text" id="maxLeverageTrigger" value="15" min="0" max="25"><br><br>
+            </div>
+        </div>
+
+        <div>
+            <button type="button" id="submitButton">Submit</button>
+        </div>
+        
+    </div>
+    
+    <!-- Messenger Blobs -->
+    <div class="reg-box">
+        <h1>messenger_blobs.json</h1>
+        <h3><i>Enter bot parameters to generate this file.</i></h3>
+        <div class="json-box">
+            <p id="messengerBlobText" class="p-json">
+            </p>
+        </div>
+        <br>
+        <button class="button" id="copyMessengerBlobButton">Copy Messenger Blob</button>
+
+        <p id="messengerBlobsCopyComplete"></p>
+    </div>
+
+    <!-- API Credentials -->
+    <div class="reg-box">
+        <h1>api_credentials.json</h1>
+        <h3><i>Enter bot parameters to generate this file.</i></h3>
+        <div class="json-box">
+            <p id="apiCredentialsText" class="p-json">
+                
+            </p>
+        </div>
+        <br>
+        
+        <button class="button" id="copyApiCredsButton">Copy API Credentials</button>
+
+        <p id="apiCredsCopyComplete"></p>
+    </div>
+</div>
+
+</body>
+<script src="index.js"></script>
+</html>

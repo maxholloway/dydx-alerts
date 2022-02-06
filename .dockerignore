@@ -1,0 +1,8 @@
+# dev data + secrets
+api_credentials.json
+messenger_blobs.json
+
+# python dev info
+venv/
+testvenv/
+__pycache__/

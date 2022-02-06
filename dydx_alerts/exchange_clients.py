@@ -59,13 +59,17 @@ class CcxtBaseClient(BaseClient):
             raise ValueError("Invalid exchange.")
 
     async def get_index_price(self, market: str) -> float:
-        data = await self.client.fetch_ticker(market)
+        try:
+            data = await self.client.fetch_ticker(market)
 
-        price_points = list(filter(
-            lambda x: x != None,
-            [data["bid"], data["ask"], data["last"]]
-        ))
-        return median(price_points)
+            price_points = list(filter(
+                lambda x: x != None,
+                [data["bid"], data["ask"], data["last"]]
+            ))
+            return median(price_points)
+        except Exception as ex:
+            print(f"Exception occurred when getting index price. Skipping it and returning -1.\n{ex}")
+            return -1
 
     async def close(self):
         return await self.client.close()
@@ -149,7 +153,6 @@ class OkexClient(ManualClient):
         request_url = f"https://www.okex.com/api/v5/market/ticker?instId={base}-{quote}-SWAP"
         async with aiohttp.ClientSession() as session:
             async with session.get(request_url) as resp:
-                print(resp.status)
                 if resp.status != 200:
                     return -1
                 

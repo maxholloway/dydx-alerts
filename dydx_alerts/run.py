@@ -100,7 +100,6 @@ async def handle_messaging(user_id, index_prices, user_equity, user_positions, m
         message_api_credentials = get_api_credentials(user_id, message_platform_name, message_platform_api_key_config_id)
 
         message_platform = get_message_platform(message_platform_config, message_api_credentials)
-        # message_platform.set_api_credentials(message_api_credentials)
         await message_platform.send_message(message)
 
 def _get_index_prices_fixture():

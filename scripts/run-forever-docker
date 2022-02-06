@@ -1,0 +1,7 @@
+#!/bin/bash
+
+docker run \
+    -d \
+    -v $(pwd)/messenger_blobs.json:/messenger_blobs.json \
+    -v $(pwd)/api_credentials.json:/api_credentials.json \
+    maxholloway/dydx-alerts:0.1.0

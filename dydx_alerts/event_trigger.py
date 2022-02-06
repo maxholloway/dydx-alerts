@@ -1,11 +1,6 @@
-import json
 from typing import Dict
 
-from constants import EventTriggerTypes
-
-def get_maintenance_collateral_ratios():
-    with open("collateral_requirements.json", "r") as collat_requirement_file:
-        return json.load(collat_requirement_file)["maintenance"]
+from constants import EventTriggerTypes, COLLATERAL_REQUIREMENTS
 
 def get_message_generator(event_trigger_config):
     """
@@ -23,7 +18,7 @@ def make_below_thresh_event_trigger(config_options):
         account_open_interest = 0
         account_margin_requirement = 0
         
-        maintenance_colalteral_ratios = get_maintenance_collateral_ratios()
+        maintenance_colalteral_ratios = COLLATERAL_REQUIREMENTS["maintenance"]
         for market_name, pos_size in user_positions.items():
             market_open_interest = abs(pos_size) * index_prices[market_name]
             account_open_interest += market_open_interest
