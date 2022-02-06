@@ -7,7 +7,8 @@
     ```bash
     git clone https://github.com/maxholloway/dydx-alerts && cd dydx-alerts && bash scripts/setup-docker
     ```
-3. Use [dydxalerts.com](dydxalerts.com) to generate your bot configuration. Once generated, download `api_credentials.json` and `messenger_blobs.json` to your computer. Now on your virtual machine, run `nano messenger_blobs.json`, paste the contents of `messenger_blobs.json` from your local computer, then press the `Control` and `X` keys on your keyboard at the same time. When it asks you to save the modified buffer, type `Y`, then press enter when it asks about the file name. Do the same for your API credentials by entering the following into your terminal: `nano api_credentials.json`, then pasting the contents of `api_credentials.json` from your local computer, then exiting in the same way as before.
+3. Use [dydxalerts.com](dydxalerts.com) alongside the ["Getting Bot Congig Credentials" guide](bot_config_credentials.md) to generate your bot credentials.
+3. Once `messenger_blobs.json` and `api_credentials.json` text are generated on dydxalerts.com, go back to your virtual machine terminal. On your virtual machine, run `nano messenger_blobs.json`, paste the contents of `messenger_blobs.json` from dydxalerts.com, then press the `Control` and `X` keys on your keyboard at the same time. When it asks you to save the modified buffer, type `Y`, then press enter when it asks about the file name. Do the same for your API credentials by entering the following into your terminal: `nano api_credentials.json`, then pasting the contents of `api_credentials.json` from dydxalerts.com, then exiting in the same way as before.
 4. Run the following command:
     ```bash
     bash scripts/run-forever-docker
