@@ -1,5 +1,5 @@
 # dYdX Alerts
-*Notifications for dYdX account info*
+*Get alerted before your dYdX account gets liquidated.*
 
 ## Why use dYdX Alerts?
 If you have ever been liquidated on dYdX, then you know just how valuable it is have a tool that notifies you before your account gets wrecked. This tool solves that problem by sending notifications on all popular messaging apps (discord, email, slack, telegram) before their positions are force-liquidated.
