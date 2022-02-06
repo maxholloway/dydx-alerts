@@ -1,5 +1,5 @@
 # Running a Virtual Machine on Digital Ocean
-1. Open an account on [digitalocean.com](digitalocean.com).
+1. Open an account on [digitalocean.com](https://www.digitalocean.com/).
 2. Click the "+ New Project" button on the left-hand side panel, and name the new project "dydx-alert-bot-demo". If DigitalOceal asks you to move resources to it, click "Skip for now".
 3. In the "dydx-alert-bot-demo" project, click the "Create" tab in the top right, and select "Droplets" ("Droplets" are the digital ocean term for "virtual machine"). You should now be on a screen that allows you to configure the droplet. Set the following options:
     * Image: Ubuntu 20.04

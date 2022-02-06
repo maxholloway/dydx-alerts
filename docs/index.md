@@ -3,6 +3,7 @@
 ## For Users
 * Usage overview: [link](usage.md)
 * Cloud virtual machine setup: [link](cloud-vm.md)
+* Bot Config Credentials Setup: [link](bot_config_credentials.md)
 * Current message platforms: [link](message_platforms.md)
 * Current event triggers: [link](event_triggers.md)
 
