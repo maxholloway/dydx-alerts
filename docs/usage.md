@@ -17,6 +17,10 @@
     ```
 6. It is now safe for you to type `exit` and close your terminal window. However, if your virtual machine turns off or if this docker daemon is otherwise interrupted, then you will need to re-run the `run-forever-docker` command above.
 
+**YouTube Video Tutorial**
+
+[![](https://img.youtube.com/vi/Kvo_Dt-4VNI/0.jpg)](https://www.youtube.com/watch?v=Kvo_Dt-4VNI)
+
 
 ## Method 2: Run from Source (for developers)
 1. Create a cloud virtual machine. If you've never done this before, follow the steps in the ["Running a Virtual Machine on Digital Ocean" guide](./cloud-vm).

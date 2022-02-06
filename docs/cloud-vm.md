@@ -12,3 +12,9 @@
     * Hostname: dydx-alert-demo
 4. Wait while the virtual machine is initialized. Once it has loaded, click on the number that is separated by dots. This is the IP address of the virtual machine, and we will use it to access the machine. ![](assets/cloud-setup/droplet-ip.png)
 5. (meant for mac/linux users) Open up the terminal app on your computer. Copy the following text and paste it into your terminal window: `ssh root@IP_ADDRESS`, replacing `IP_ADDRESS` with the number you saw before. An example might look like the following: `ssh root@142.93.201.123`. If you see a question about an ECDSA key fingerprint, type `yes` and press enter. You should now see a prompt asking for a password; type (or paste) the password that you set when creating the droplet, then press "enter" once you finish typing the password. If this was successful, your terminal window should read `root@dydx-alert-demo:~#`. Now any command you enter into the terminal will be executed on the virtual machine!
+
+**YouTube Video Tutorial**
+
+[![](https://img.youtube.com/vi/vAPNjc33B24/0.jpg)](https://www.youtube.com/watch?v=vAPNjc33B24)
+
+
