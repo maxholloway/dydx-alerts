@@ -9,6 +9,7 @@ from dydx3.constants import NETWORK_ID_ROPSTEN
 from constants import ApiNames, DEFAULT_DYDX_API_KEY_CONFIG_ID
 from event_trigger import get_message_generator
 from index_price import IndexPriceGetter
+from log import get_logger
 from message_platform import get_message_platform
 
 def get_messenger_blobs() -> List[Dict[str, Any]]:
@@ -59,6 +60,7 @@ def get_dydx_client(user_id):
     )
 
 async def get_user_positions(user_id) -> Dict[str, float]:
+    # TODO: optimize by finding a way to do this async
     client = get_dydx_client(user_id)
     all_position_data = client.private.get_positions().data["positions"]
     positions = {pos["market"]: float(pos["size"]) for pos in all_position_data}
@@ -73,8 +75,10 @@ async def get_all_users_positions(user_ids) -> Dict[str, Dict[str, float]]:
     return user_to_positions
 
 async def get_user_equity(user_id) -> float:
+    # TODO: optimize by finding a way to do this async
     client = get_dydx_client(user_id)
-    return float(client.private.get_accounts().data["accounts"][0]["equity"])
+    user_equity = float(client.private.get_accounts().data["accounts"][0]["equity"])
+    return user_equity
 
 async def get_all_users_equity(user_ids) -> Dict[str, float]:
     user_ids = list(user_ids)
@@ -84,8 +88,7 @@ async def get_all_users_equity(user_ids) -> Dict[str, float]:
     user_to_equity = {user_ids[i]: user_equities[i] for i in range(len(user_ids))}
     return user_to_equity
 
-
-async def handle_messaging(user_id, index_prices, user_equity, user_positions, message_platform_config, event_trigger_config):
+async def handle_messaging(user_id, index_prices, user_equity, user_positions, message_platform_config, event_trigger_config, logger):
     """
     * Create an event trigger object from the event trigger config.
     * Check, via builtin method of the trigger object, if the account meets criteria to send message. If it does not meet the criteria, return the empty string. If it does meet the criteria, return the message to be sent.
@@ -100,9 +103,11 @@ async def handle_messaging(user_id, index_prices, user_equity, user_positions, m
         message_api_credentials = get_api_credentials(user_id, message_platform_name, message_platform_api_key_config_id)
 
         message_platform = get_message_platform(message_platform_config, message_api_credentials)
-        await message_platform.send_message(message)
+        await message_platform.send_message(message, logger)
 
 async def main():
+    logger = get_logger()
+
     index_prices = await IndexPriceGetter.get_all_index_prices()
 
     messenger_blobs = get_messenger_blobs()
@@ -120,7 +125,7 @@ async def main():
         message_platform_config = messenger_blob["message_platform_config"]
         event_trigger_config = messenger_blob["event_trigger_config"]
         message_producers.append(
-            handle_messaging(user_id, index_prices, user_equity, user_positions, message_platform_config, event_trigger_config)
+            handle_messaging(user_id, index_prices, user_equity, user_positions, message_platform_config, event_trigger_config, logger)
         )
     await asyncio.gather(*message_producers)
     

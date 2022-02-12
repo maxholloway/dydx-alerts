@@ -7,6 +7,7 @@ import ccxt.async_support as ccxt
 
 from constants import PERP_MARKETS, PERP_MARKET_TO_SOURCE, Exchanges
 from exchange_clients import BinanceClient, BitFinexClient, BitStampClient, BitTrexClient, CoinbaseProClient, FtxClient, GateClient, GeminiClient, HuobiClient, KrakenClient, OkexClient
+from log import get_logger, IMPORTANT_INFO_LEVEL
 
 def tuple_list_to_dict(tuple_list):
     return {k: v for (k, v) in tuple_list}
@@ -29,6 +30,7 @@ class IndexPriceGetter:
             Exchanges.KRAKEN: KrakenClient(),
             Exchanges.OKEX: OkexClient(),
         }
+        self.logger = get_logger()
 
     async def cleanup(self):
         await asyncio.gather(*[client.close() for client in self.clients.values()])
@@ -100,6 +102,7 @@ class IndexPriceGetter:
                 self._get_index_price_single_exchange(Exchanges.KRAKEN, "USDT/USD"),
                 self._get_index_price_single_exchange(Exchanges.OKEX, "BTC/USDT")            
             ])
+        self.logger.log(IMPORTANT_INFO_LEVEL, f"Index prices inside : {(binance_btc_usdt, bitfinex_usdt_usd, ftx_eth_usdt, huobi_eth_usdt, kraken_usdt_usd, okex_btc_usdt)}")
         usdt_prices = (
             btc_index_price / binance_btc_usdt,
             bitfinex_usdt_usd,
@@ -108,15 +111,19 @@ class IndexPriceGetter:
             kraken_usdt_usd,
             btc_index_price / okex_btc_usdt
         )
-        return median(usdt_prices)
+        result = median(usdt_prices)
+        if result == -1:
+            logger.error("Fetching USDT index price failed!")
+            result = 1 # fallback to USDT price = 1 if we fail to retrieve it
+        return result
 
     async def _get_all_index_prices(self) -> Dict[str, float]:
         (btc_index_price, eth_index_price) = await asyncio.gather(*[
             self._get_btc_index_price_no_usdt(), self._get_eth_index_price_no_usdt() 
         ])
-        print("btc index", btc_index_price, "eth_index", eth_index_price)
+        self.logger.log(IMPORTANT_INFO_LEVEL, f"btc index {btc_index_price} eth_index {eth_index_price}")
         usdt_price = await self._get_usdt_index_price(btc_index_price, eth_index_price)
-        print("usdt index", usdt_price)
+        self.logger.log(IMPORTANT_INFO_LEVEL, f"usdt index {usdt_price}")
 
         index_prices = await asyncio.gather(
             *[self._get_index_price_many_exchanges(

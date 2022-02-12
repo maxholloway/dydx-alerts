@@ -8,6 +8,7 @@ from statistics import median
 import ccxt.async_support as ccxt
 
 from constants import Exchanges
+from log import get_logger
 
 # Base Clients
 class BaseClient(ABC):
@@ -33,6 +34,7 @@ class BaseClient(ABC):
 
 class CcxtBaseClient(BaseClient):
     def __init__(self, exchange_name):
+        self.logger = get_logger()
         if exchange_name == Exchanges.BINANCE: 
             self.client = ccxt.binance({"enableRateLimit": True})
         elif exchange_name == Exchanges.BITFINEX: 
@@ -68,7 +70,8 @@ class CcxtBaseClient(BaseClient):
             ))
             return median(price_points)
         except Exception as ex:
-            print(f"Exception occurred when getting index price. Skipping it and returning -1.\n{ex}")
+            print("Exception index price")
+            self.logger.error(f"Exception occurred when getting index price. Skipping it and returning -1.\n{ex}", exc_info=True)
             return -1
 
     async def close(self):
@@ -89,13 +92,19 @@ class ManualClient(BaseClient):
 
         for example, requests_per_interval=20 interval_len=2 would mean we can make 20 requests per 2 seconds
         """
+        self.logger = get_logger()
         self.rate_limiter = AsyncLimiter(requests_per_interval, interval_len)
 
     async def get_index_price(self, market: str) -> float:
-        index_price = None
-        async with self.rate_limiter:
-            index_price = await self.get_index_price_no_rate_limit(market)
-        return index_price
+        try:
+            index_price = None
+            async with self.rate_limiter:
+                index_price = await self.get_index_price_no_rate_limit(market)
+            return index_price
+        except Exception as ex:
+            print("Exception index price")
+            self.logger.error(f"Exception occurred when getting index price. Skipping it and returning -1.\n{ex}", exc_info=True)
+            return -1
 
     @abstractmethod
     async def get_index_price_no_rate_limit(self, market: str) -> float:
