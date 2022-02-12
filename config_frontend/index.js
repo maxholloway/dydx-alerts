@@ -55,6 +55,20 @@ function getAllInputs () {
     return allInputs
 }
 
+function matches (string, regex) {
+    // Return True if string matches regex, else return False
+    if (typeof string == "number") {
+        string = string.toString()
+    }
+
+    const matches = string.match(regex)
+    if ((matches === null) || (matches.length != 1)) {
+        return false;
+    } else {
+        return (matches[0].length == string.length)
+    }
+}
+
 function checkCleanInputs (allInputs) {
     // return true iff all inputs are clean
 
@@ -67,6 +81,24 @@ function checkCleanInputs (allInputs) {
     if ( ! allNonNull(dydxConfig) ) {
         alert("All of the dYdX parameters must be filled out!");
         return false;
+    } else if (!matches(
+        allInputs["dydxKey"], 
+        /[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}/
+        )) {
+        alert("Invalid dYdX API 'key'.");
+        return false;
+    } else if (!matches(
+        allInputs["dydxSecret"], 
+        /[\w-]{40}/
+        )) {
+        alert("Invalid dYdX API 'secret'.");
+        return false;
+    } else if (!matches(
+        allInputs["dydxPassphrase"], 
+        /[\w-]{20}/
+        )) {
+        alert("Invalid dYdX API 'passphrase'.");
+        return false;
     }
     
     // email
@@ -75,23 +107,72 @@ function checkCleanInputs (allInputs) {
         allInputs["senderEmailPassword"],
         allInputs["toEmailAddress"]
     ]
-    if (
-        hasNonNull(emailConfig) &&
-        ! allNonNull(emailConfig)
-    ) {
-        alert("If you use want to use an email bot, then you must enter all of its parameters!");
-        return false;
+    if (hasNonNull(emailConfig)) {
+        if (! allNonNull(emailConfig)) {
+            // might not be necessary, since we do regex checks, but still helpful
+            alert("If you use want to use an email bot, then you must enter all of its parameters!");
+            return false;
+        } else if (!matches(allInputs["senderEmailAddress"], /[\w-]+@[\w-]+.[\w-]+/)) {
+            alert("Invalid sender email address.")
+            return false;
+        } else if (!matches(allInputs["senderEmailPassword"], /[\w]+/)) {
+            alert("Invalid sender password.")
+            return false;
+        } else if (!matches(allInputs["toEmailAddress"], /[\w-]+@[\w-]+.[\w-]+/)) {
+            alert("Invalid receiver email address.")
+            return false;
+        }
+        
     }
 
+    // slack
+    if (hasNonNull([allInputs["slackWebhookUrl"]])) {
+        if (!matches(allInputs["slackWebhookUrl"], /https:\/\/hooks.slack.com\/services\/[\w]{11}\/[\w]{11}\/[\w]{24}/)) {
+            alert("Invalid slack webhook url.");
+            return false;
+        }
+    }
+
+    // discord
+    if (hasNonNull([allInputs["discordWebhookUrl"]])) {
+        if (!matches(allInputs["discordWebhookUrl"], /https:\/\/discord.com\/api\/webhooks\/[\w]+\/[\w]+-[\w]+/)) {
+            alert("Invalid discord webhook url.");
+            return false;
+        }
+    }
+
+    // telegram
     const telegramConfig = [
         allInputs["telegramBotToken"],
         allInputs["telegramChatId"],
     ];
-    if (
-        hasNonNull(telegramConfig) &&
-        ! allNonNull(telegramConfig)
-    ) {
-        alert("If you use want to use the telegram bot, then you must enter all of its parameters!");
+    if (hasNonNull(telegramConfig)) {
+        if (! allNonNull(telegramConfig)) {
+            alert("If you use want to use the telegram bot, then you must enter all of its parameters!");
+            return false;
+        } else if (!matches(allInputs["telegramBotToken"], /[\d]{10}:[\w-]{35}/)) {
+            alert("Invalid telegram bot token.")
+            return false;
+        } else if (!matches(allInputs["telegramChatId"], /[-]*[\d]{9}/)) {
+            alert("Invalid telegram chat id.")
+            return false;
+        }
+    }
+
+    // max leverage
+    var maxLeverage = allInputs["maxLeverageTrigger"]
+    if (typeof maxLeverage != "number") {
+        maxLeverage = parseFloat(maxLeverage);
+    }
+    
+    if (isNaN(maxLeverage)) {
+        alert("Invalid maximum leverage: unable to parse number.");
+        return false;
+    } else if (maxLeverage <= 0) {
+        alert("Invalid maximum leverage: leverage must be positive.");
+        return false;
+    } else if (maxLeverage > 25) {
+        alert("Invalid maximum leverage: leverage must be less than 25.");
         return false;
     }
 
@@ -258,8 +339,6 @@ function generateApiCredentialsJson (userInputsObject) {
             "telegram_chat_id": userInputsObject["telegramChatId"]
         }]
     }
-
-    // console.log("allAPiCreds", allApiCredentials)
 
     return myStringify(allApiCredentials);
 }
