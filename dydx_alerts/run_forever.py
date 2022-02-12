@@ -6,8 +6,7 @@ from run import main
 
 async def run_forever(timeout_seconds, delay_seconds, logger):
     while True:
-        print("Starting bot run.")
-        logger.log(IMPORTANT_INFO_LEVEL, "Beginning a bot run iteration.")
+        logger.info("Beginning a bot run iteration.")
         start = dt.now().timestamp()
         try:
             await asyncio.wait_for(
@@ -15,14 +14,12 @@ async def run_forever(timeout_seconds, delay_seconds, logger):
                 timeout=timeout_seconds
             )
         except asyncio.TimeoutError as to_error:
-            print("Asyncio time out error.")
             logger.error(f"Asyncio time out error.", exc_info=True)
         
         elapsed_seconds = dt.now().timestamp() - start
     
         if delay_seconds > elapsed_seconds:
             seconds_remaining = delay_seconds-elapsed_seconds
-            print(f"Bot run completed. Sleeping for {seconds_remaining} seconds.")
             logger.log(IMPORTANT_INFO_LEVEL, f"Bot run completed. Sleeping for {seconds_remaining} seconds.")
             await asyncio.sleep(seconds_remaining)
         
