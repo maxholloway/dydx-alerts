@@ -15,6 +15,7 @@
     ```bash
     bash scripts/run-forever-docker
     ```
+    This should give a long (64 character) string output that looks something like `3a7129e3962607...a7e6`. Check that the bot is running by running the command `docker ps`; you should see a `CONTAINER ID` that matches the first 12 characters of the previous string output, e.g. `3a7129e39626`. If there are no containers present, then something went wrong. To check the bot's logs, run the command `nano logs/logs.log`; any runtime errors will appear there.
 6. It is now safe for you to type `exit` and close your terminal window. However, if your virtual machine turns off or if this docker daemon is otherwise interrupted, then you will need to re-run the `run-forever-docker` command above.
 
 **YouTube Video Tutorial**
@@ -35,4 +36,5 @@
     ```bash
     source venv/bin/activate && bash scripts/run-forever
     ```
+    To check the bot's logs, run the command `nano logs/logs.log`; any runtime errors will appear there.
 6. Finally, press "Control"+"A" at the same time, then "Control"+"D" at the same time. This takes you back to the terminal that you had before you entered the screen command. It is now safe for you to type `exit` and close your terminal window.
