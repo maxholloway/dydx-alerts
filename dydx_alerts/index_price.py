@@ -18,7 +18,7 @@ from exchange_clients import (
     KrakenClient,
     OkexClient,
 )
-from log import get_logger, IMPORTANT_INFO_LEVEL
+from log import IMPORTANT_INFO_LEVEL
 
 
 def tuple_list_to_dict(tuple_list):
@@ -33,7 +33,7 @@ class IndexPriceGetter:
     An ephemeral object that wraps some behavior for getting index prices.
     """
 
-    def __init__(self):
+    def __init__(self, logger):
         self.clients = {
             Exchanges.BINANCE: BinanceClient(),
             Exchanges.BITFINEX: BitFinexClient(),
@@ -47,7 +47,7 @@ class IndexPriceGetter:
             Exchanges.KRAKEN: KrakenClient(),
             Exchanges.OKEX: OkexClient(),
         }
-        self.logger = get_logger()
+        self.logger = logger
 
     async def cleanup(self):
         """
@@ -180,11 +180,12 @@ class IndexPriceGetter:
         return market_to_index_price
 
     @staticmethod
-    async def get_all_index_prices():
+    async def get_all_index_prices(logger):
         """
         Entrypoint for getting all of the index prices.
         """
-        index_price_getter = IndexPriceGetter()
+        logger.info("Starting to get all index prices.")
+        index_price_getter = IndexPriceGetter(logger)
         index_prices = await index_price_getter._get_all_index_prices()
         await index_price_getter.cleanup()
         return index_prices
