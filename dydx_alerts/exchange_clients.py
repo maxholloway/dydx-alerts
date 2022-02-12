@@ -71,7 +71,7 @@ class CcxtBaseClient(BaseClient):
             return median(price_points)
         except Exception as ex:
             print("Exception index price")
-            # self.logger.error(f"Exception occurred when getting index price. Skipping it and returning -1.\n{ex}", exc_info=True)
+            self.logger.error(f"Exception occurred when getting index price. Skipping it and returning -1.\n{ex}", exc_info=True)
             return -1
 
     async def close(self):
@@ -103,7 +103,7 @@ class ManualClient(BaseClient):
             return index_price
         except Exception as ex:
             print("Exception index price")
-            # self.logger.error(f"Exception occurred when getting index price. Skipping it and returning -1.\n{ex}", exc_info=True)
+            self.logger.error(f"Exception occurred when getting index price. Skipping it and returning -1.\n{ex}", exc_info=True)
             return -1
 
     @abstractmethod
