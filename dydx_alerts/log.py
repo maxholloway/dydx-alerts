@@ -2,8 +2,10 @@ import logging
 
 IMPORTANT_INFO_LEVEL = logging.INFO + 5
 
-
 def get_logger():
+    """
+    Instantiates the canonical logger used by all bot modules.
+    """
     # Create a custom logger
     logger = logging.getLogger("")
     logger.setLevel(logging.DEBUG)
@@ -25,10 +27,6 @@ def get_logger():
     logger.addHandler(f_handler)
 
     return logger
-
-
-# def get_logger():
-#     return None
 
 if __name__ == "__main__":
     l = get_logger()

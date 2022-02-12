@@ -1,3 +1,7 @@
+"""
+Entrypoint for running the bot a single time.
+"""
+
 import asyncio
 import json
 from typing import Any, Dict, List
@@ -24,6 +28,9 @@ def get_messenger_blobs() -> List[Dict[str, Any]]:
 
 
 def get_all_user_ids(messenger_blobs):
+    """
+    Parse each user id from the messenger_blobs
+    """
     user_ids = set()
     for messenger_blob in messenger_blobs:
         user_ids.add(messenger_blob["user_id"])
@@ -50,6 +57,9 @@ def get_api_credentials(user_id, platform_name, message_platform_api_key_config_
 
 
 def get_dydx_api_credentials(user_id):
+    """
+    Get dYdX API credentials from api_credentials.json
+    """
     api_credentials = get_api_credentials(
         user_id, ApiNames.DYDX, DEFAULT_DYDX_API_KEY_CONFIG_ID
     )
@@ -61,6 +71,9 @@ def get_dydx_api_credentials(user_id):
 
 
 def get_dydx_client(user_id):
+    """
+    Getter for a particular user's dYdX API client.
+    """
     dydx_api_credentials = get_dydx_api_credentials(user_id)
     return Client(
         host=API_HOST_ROPSTEN,
@@ -70,6 +83,9 @@ def get_dydx_client(user_id):
 
 
 async def get_user_positions(user_id) -> Dict[str, float]:
+    """
+    Get the positions in a particular user's account.
+    """
     # TODO: optimize by finding a way to do this async
     client = get_dydx_client(user_id)
     all_position_data = client.private.get_positions().data["positions"]
@@ -78,6 +94,9 @@ async def get_user_positions(user_id) -> Dict[str, float]:
 
 
 async def get_all_users_positions(user_ids) -> Dict[str, Dict[str, float]]:
+    """
+    Gets the positions for each user in a messenger blob.
+    """
     user_ids = list(user_ids)
     user_positions = await asyncio.gather(
         *[get_user_positions(user_id) for user_id in user_ids]  # list of coroutines
@@ -87,6 +106,9 @@ async def get_all_users_positions(user_ids) -> Dict[str, Dict[str, float]]:
 
 
 async def get_user_equity(user_id) -> float:
+    """
+    Get the equity in a particular user's account.
+    """
     # TODO: optimize by finding a way to do this async
     client = get_dydx_client(user_id)
     user_equity = float(client.private.get_accounts().data["accounts"][0]["equity"])
@@ -94,6 +116,9 @@ async def get_user_equity(user_id) -> float:
 
 
 async def get_all_users_equity(user_ids) -> Dict[str, float]:
+    """
+    Gets the equity for each user in a messenger blob.
+    """
     user_ids = list(user_ids)
     user_equities = await asyncio.gather(
         *[get_user_equity(user_id) for user_id in user_ids]  # list of coroutines
@@ -135,6 +160,12 @@ async def handle_messaging(
 
 
 async def main():
+    """
+    Entrypoint for running a single iteration of the bot.
+    This uses the message configuration to check account
+    balances, determine if any positions are in danger of
+    liquidation, and send messages.
+    """
     logger = get_logger()
 
     index_prices = await IndexPriceGetter.get_all_index_prices()

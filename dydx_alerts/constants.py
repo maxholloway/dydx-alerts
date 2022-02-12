@@ -2,19 +2,33 @@ from typing import Dict
 
 # API names
 class ApiNames:
+    """
+    Identifiers of some APIs that are used in the `api_credentials.json`.
+    """
     DYDX = "dydx"
     SLACK = "slack"
     EMAIL = "email"
 
 
 class EventTriggerTypes:
+    """
+    The names of the event triggers that are supported.
+    Currently we only support messages for when the account
+    collateral dips below a certain threshold.
+    """
     BELOW_THRESH = "below_thresh"
 
 
-DEFAULT_DYDX_API_KEY_CONFIG_ID = 0  # there may be more than one set of credentials for each (user, platform) pair; to distinguish between those sets of credentials, we give each set an id. The default ID for dYdX's API credentials is 0. In the future, we may want to allow users to have more than one set of dYdX API credentials.
-
+# there may be more than one set of credentials for each (user, platform) pair;
+# to distinguish between those sets of credentials, we give each set an id.
+# The default ID for dYdX's API credentials is 0. In the future, we may want to
+# allow users to have more than one set of dYdX API credentials.
+DEFAULT_DYDX_API_KEY_CONFIG_ID = 0
 
 class Exchanges:
+    """
+    Exchange names that are needed when getting index prices.
+    """
     BINANCE = "BINANCE"
     BITFINEX = "BITFINEX"
     BITSTAMP = "BITSTAMP"

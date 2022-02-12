@@ -1,5 +1,4 @@
 import asyncio
-from operator import index
 from statistics import median
 from typing import Dict
 
@@ -23,6 +22,9 @@ from log import get_logger, IMPORTANT_INFO_LEVEL
 
 
 def tuple_list_to_dict(tuple_list):
+    """
+    Convert a list of duples [(k1, v1), (k2, v2), ...] to a dict.
+    """
     return {k: v for (k, v) in tuple_list}
 
 
@@ -48,6 +50,9 @@ class IndexPriceGetter:
         self.logger = get_logger()
 
     async def cleanup(self):
+        """
+        Clean up intermediate state before destroying the object.
+        """
         await asyncio.gather(*[client.close() for client in self.clients.values()])
 
     def _get_client(self, exchange_name):
@@ -80,8 +85,7 @@ class IndexPriceGetter:
             ]
         )
 
-        for i in range(len(exchange_name_to_market_items_list)):
-            (exchange_name, market) = exchange_name_to_market_items_list[i]
+        for i, (exchange_name, market) in enumerate(exchange_name_to_market_items_list):
             if "USDT" in market:
                 if usdt_price:
                     prices[i] = prices[i] * usdt_price
@@ -146,7 +150,7 @@ class IndexPriceGetter:
         )
         result = median(usdt_prices)
         if result == -1:
-            logger.error("Fetching USDT index price failed!")
+            self.logger.error("Fetching USDT index price failed!")
             result = 1  # fallback to USDT price = 1 if we fail to retrieve it
         return result
 
@@ -177,6 +181,9 @@ class IndexPriceGetter:
 
     @staticmethod
     async def get_all_index_prices():
+        """
+        Entrypoint for getting all of the index prices.
+        """
         index_price_getter = IndexPriceGetter()
         index_prices = await index_price_getter._get_all_index_prices()
         await index_price_getter.cleanup()

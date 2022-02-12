@@ -1,11 +1,15 @@
+"""
+Definitions for all of the supported message platforms through which
+alerts are sent.
+"""
+
 from abc import ABC, abstractmethod
 import aiohttp
 import json
 import os
-import requests
 import smtplib
 import ssl
-from typing import Any, Dict
+from typing import Dict
 
 from log import get_logger
 
@@ -24,11 +28,15 @@ class BaseMessagePlatform(ABC):
         """
         Send the given free-text message. If it sends successfully, return True; else, return False.
         """
-        pass
-
 
 class SlackMessagePlatform(BaseMessagePlatform):
+    """
+    Code for sending messages over slack.
+    """
     async def send_message(self, message: str, logger):
+        """
+        Send a slack webhook message.
+        """
         request_url = self.message_api_credentials["webhook_url"]
         data = json.dumps({"text": message})
         headers = {"Content-Type": "application/json"}
@@ -49,7 +57,13 @@ class SlackMessagePlatform(BaseMessagePlatform):
 
 
 class EmailMessagePlatform(BaseMessagePlatform):
+    """
+    Code for sending messages over email.
+    """
     async def send_message(self, email_body, logger):
+        """
+        Send an email message.
+        """
         # TODO: support general smtp servers, not just gmail.
         try:
             from_email_address, from_email_password = (
@@ -76,7 +90,13 @@ class EmailMessagePlatform(BaseMessagePlatform):
 
 
 class TelegramMessagePlatform(BaseMessagePlatform):
+    """
+    Code for sending messages over telegram.
+    """
     async def send_message(self, message: str, logger):
+        """
+        Send a telegram message to a telegram chat.
+        """
         try:
             bot_token, tg_chat_id = (
                 self.message_api_credentials["bot_token"],
@@ -98,7 +118,13 @@ class TelegramMessagePlatform(BaseMessagePlatform):
 
 
 class DiscordMessagePlatform(BaseMessagePlatform):
+    """
+    Code for sending messages over discord.
+    """
     async def send_message(self, message: str, logger):
+        """
+        Send a discord webhook message.
+        """
         try:
             request_url = os.path.join(
                 self.message_api_credentials["webhook_url"], "slack"
@@ -124,6 +150,9 @@ class DiscordMessagePlatform(BaseMessagePlatform):
 def get_message_platform(
     message_platform_config, message_api_credentials
 ) -> BaseMessagePlatform:
+    """
+    Parses the message platform out of the config.
+    """
     # TODO: potentially move this into a dict, instead of a case-by-case if statement.
     platform_id = message_platform_config["message_platform"].upper()
     platform_config = message_platform_config["platform_specific_config"]

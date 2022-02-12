@@ -7,7 +7,8 @@ def get_message_generator(event_trigger_config):
     """
     Given the event trigger config, return the function that can be used to produce a message.
 
-    event_trigger_config: a dict object that corresponds to the `event_trigger_config` attribute of a messenger blob
+    event_trigger_config: a dict object that corresponds to the 
+        `event_trigger_config` attribute of a messenger blob
     """
     if event_trigger_config["trigger"] == EventTriggerTypes.BELOW_THRESH:
         return make_below_thresh_event_trigger(event_trigger_config["trigger_options"])
@@ -16,6 +17,9 @@ def get_message_generator(event_trigger_config):
 
 
 def make_below_thresh_event_trigger(config_options):
+    """
+    Create a function that generates a "below threshold event" message.
+    """
     def below_thresh_event_trigger(
         index_prices: Dict[str, float],
         user_equity: float,

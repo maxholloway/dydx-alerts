@@ -1,3 +1,6 @@
+"""
+Entrypoint for running the bot.
+"""
 import asyncio
 from datetime import datetime as dt
 
@@ -6,13 +9,17 @@ from run import main
 
 
 async def run_forever(timeout_seconds, delay_seconds, logger):
+    """
+    Thin wrapper above run.py's `main()` function; just run the `main()`
+    on repeat forever.
+    """
     while True:
         logger.info("Beginning a bot run iteration.")
         start = dt.now().timestamp()
         try:
             await asyncio.wait_for(main(), timeout=timeout_seconds)
-        except asyncio.TimeoutError as to_error:
-            logger.error(f"Asyncio time out error.", exc_info=True)
+        except asyncio.TimeoutError:
+            logger.error("Asyncio time out error.", exc_info=True)
 
         elapsed_seconds = dt.now().timestamp() - start
 
@@ -27,13 +34,13 @@ async def run_forever(timeout_seconds, delay_seconds, logger):
 
 if __name__ == "__main__":
     # TODO: potentially move these variables into command-line arguments
-    five_minute_seconds = 5 * 60
-    ten_minute_seconds = 10 * 60
+    FIVE_MINUTES_SECONDS = 5 * 60
+    TEN_MINUTES_SECONDS = 10 * 60
     logger = get_logger()
     asyncio.run(
         run_forever(
-            timeout_seconds=five_minute_seconds,
-            delay_seconds=ten_minute_seconds,
+            timeout_seconds=FIVE_MINUTES_SECONDS,
+            delay_seconds=TEN_MINUTES_SECONDS,
             logger=logger,
         )
     )

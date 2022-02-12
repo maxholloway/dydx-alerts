@@ -22,6 +22,9 @@ class BaseClient(ABC):
 
     @abstractmethod
     async def get_index_price(self, market: str) -> float:
+        """
+        Index price for the market, as defined by dYdX.
+        """
         pass
 
     async def close(self):
@@ -35,6 +38,9 @@ class BaseClient(ABC):
 
 
 class CcxtBaseClient(BaseClient):
+    """
+    Client that uses CCXT to get exchange prices.
+    """
     def __init__(self, exchange_name):
         self.logger = get_logger()
         if exchange_name == Exchanges.BINANCE:
@@ -122,56 +128,67 @@ class ManualClient(BaseClient):
 
 # Exchange Clients
 class BinanceClient(CcxtBaseClient):
+    """Binance"""
     def __init__(self):
         super(BinanceClient, self).__init__(Exchanges.BINANCE)
 
 
 class BitFinexClient(CcxtBaseClient):
+    """BitFinex"""
     def __init__(self):
         super(BitFinexClient, self).__init__(Exchanges.BITFINEX)
 
 
 class BitStampClient(CcxtBaseClient):
+    """BitStamp"""
     def __init__(self):
         super(BitStampClient, self).__init__(Exchanges.BITSTAMP)
 
 
 class BitTrexClient(CcxtBaseClient):
+    """BitTrex"""
     def __init__(self):
         super(BitTrexClient, self).__init__(Exchanges.BITTREX)
 
 
 class CoinbaseProClient(CcxtBaseClient):
+    """CoinbasePro"""
     def __init__(self):
         super(CoinbaseProClient, self).__init__(Exchanges.COINBASE_PRO)
 
 
 class FtxClient(CcxtBaseClient):
+    """FTX"""
     def __init__(self):
         super(FtxClient, self).__init__(Exchanges.FTX)
 
 
 class GateClient(CcxtBaseClient):
+    """Gate"""
     def __init__(self):
         super(GateClient, self).__init__(Exchanges.GATE)
 
 
 class GeminiClient(CcxtBaseClient):
+    """Gemini"""
     def __init__(self):
         super(GeminiClient, self).__init__(Exchanges.GEMINI)
 
 
 class HuobiClient(CcxtBaseClient):
+    """Huobi"""
     def __init__(self):
         super(HuobiClient, self).__init__(Exchanges.HUOBI)
 
 
 class KrakenClient(CcxtBaseClient):
+    """Kraken"""
     def __init__(self):
         super(KrakenClient, self).__init__(Exchanges.KRAKEN)
 
 
 class OkexClient(ManualClient):
+    """OKEx"""
     def __init__(self):
         super(OkexClient, self).__init__(
             10, 2
@@ -204,6 +221,7 @@ class OkexClient(ManualClient):
 if __name__ == "__main__":
 
     async def tst():
+        """Small test"""
         coros = []
         client = OkexClient()
         for i in range(100):
