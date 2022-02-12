@@ -10,7 +10,7 @@ The current version of dYdX Alerts requires users to host their own dYdX Alerts 
 ## FAQ
 
 ### Is dYdX Alerts secure?
-In the current version of dYdX alerts, all code is hosted on the user's own computer or their cloud instance. **Nobody other than the user has access to user API credentials at any point.** Furthermore, the API credentials used for this bot are not sufficient for initiating withdrawals or placing orders on dYdX. The most that a malevolent actor can do with the API credentials provided is cancel the user's orders.
+In the current version of dYdX alerts, all code is hosted on the user's own computer / cloud instance. **Nobody other than the user and their cloud provider should have access to user API credentials at any point.** Furthermore, the API credentials used for this bot are not sufficient for initiating withdrawals or placing orders on dYdX. The most that a malevolent actor can do with the API credentials provided is cancel orders; they cannot place orders nor withdraw money from a user's account.
 
 ### Where is the documentation?
 [Here](https://docs.dydxalerts.com/).
