@@ -115,7 +115,7 @@ function checkCleanInputs (allInputs) {
         } else if (!matches(allInputs["senderEmailAddress"], /[\w-]+@[\w-]+.[\w-]+/)) {
             alert("Invalid sender email address.")
             return false;
-        } else if (!matches(allInputs["senderEmailPassword"], /[\w]+/)) {
+        } else if (!matches(allInputs["senderEmailPassword"], /.+/)) {
             alert("Invalid sender password.")
             return false;
         } else if (!matches(allInputs["toEmailAddress"], /[\w-]+@[\w-]+.[\w-]+/)) {
