@@ -21,7 +21,7 @@ def make_below_thresh_event_trigger(config_options):
     Create a function that generates a "below threshold event" message.
     """
     def below_thresh_event_trigger(
-        index_prices: Dict[str, float],
+        oracle_prices: Dict[str, float],
         user_equity: float,
         user_positions: Dict[str, float],
     ):
@@ -30,7 +30,7 @@ def make_below_thresh_event_trigger(config_options):
 
         maintenance_colalteral_ratios = COLLATERAL_REQUIREMENTS["maintenance"]
         for market_name, pos_size in user_positions.items():
-            market_open_interest = abs(pos_size) * index_prices[market_name]
+            market_open_interest = abs(pos_size) * oracle_prices[market_name]
             account_open_interest += market_open_interest
 
             collat_ratio_requirement = float(maintenance_colalteral_ratios[market_name])

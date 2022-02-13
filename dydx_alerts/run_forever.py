@@ -25,9 +25,8 @@ async def run_forever(timeout_seconds, delay_seconds, logger):
 
         if delay_seconds > elapsed_seconds:
             seconds_remaining = delay_seconds - elapsed_seconds
-            logger.log(
-                IMPORTANT_INFO_LEVEL,
-                f"Bot run completed. Sleeping for {seconds_remaining} seconds.",
+            logger.info(
+                f"Bot run completed after {elapsed_seconds:<.2f} seconds. Sleeping for {seconds_remaining:<.2f} seconds."
             )
             await asyncio.sleep(seconds_remaining)
 
