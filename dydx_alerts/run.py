@@ -12,7 +12,7 @@ from dydx3.constants import NETWORK_ID_ROPSTEN, NETWORK_ID_MAINNET
 
 from constants import ApiNames, DEFAULT_DYDX_API_KEY_CONFIG_ID
 from event_trigger import get_message_generator
-from index_price import IndexPriceGetter
+from oracle_price import OraclePriceGetter
 from log import get_logger
 from message_platform import get_message_platform
 
@@ -143,7 +143,7 @@ async def get_all_user_account_equity(user_accounts: List[Tuple[str, str]]) -> D
 
 async def handle_messaging(
     user_id,
-    index_prices,
+    oracle_prices,
     user_equity,
     user_positions,
     message_platform_config,
@@ -156,7 +156,7 @@ async def handle_messaging(
     * If the message is non-empty, then create a message platform object (via its config). With that object, invoke a "send_message" method.
     """
     message_generator = get_message_generator(event_trigger_config)
-    message = message_generator(index_prices, user_equity, user_positions)
+    message = message_generator(oracle_prices, user_equity, user_positions)
     if message:
         # get message platform API credentials
         message_platform_name = message_platform_config["message_platform"]
@@ -182,7 +182,7 @@ async def main():
     """
     logger = get_logger()
 
-    index_prices = await IndexPriceGetter.get_all_index_prices(logger)
+    oracle_prices = await OraclePriceGetter.get_all_oracle_prices(logger)
 
     messenger_blobs = get_messenger_blobs()
     user_accounts = get_all_user_accounts(messenger_blobs) # list of (user_id, network) duples
@@ -202,7 +202,7 @@ async def main():
         message_producers.append(
             handle_messaging(
                 user_id,
-                index_prices,
+                oracle_prices,
                 account_equity,
                 account_positions,
                 message_platform_config,
