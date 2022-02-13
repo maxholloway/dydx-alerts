@@ -5,6 +5,9 @@ messenger_blobs.json
 # Runtime Info
 logs/logs.log
 
-venv/
+devvenv/
 testvenv/
+venv/
 __pycache__/
+
+.vscode/
