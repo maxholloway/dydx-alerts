@@ -38,6 +38,10 @@
         white-space: pre;
     }
 
+    .leverage-val {
+        color: red;
+    }
+
 </style>
 
 
@@ -60,13 +64,13 @@
                 <h3>dYdX Bot Config (required)</h3>
                 
                 <label for="dydxKey">dYdX API Key (i.e. 'key'):</label>
-                <input type="text required" id="dydxKey"><br><br>
+                <input type="password" id="dydxKey"><br><br>
 
                 <label for="dydxSecret">dYdX API Secret (i.e. 'secret'):</label>
-                <input type="text required" id="dydxSecret"><br><br>
+                <input type="password" id="dydxSecret"><br><br>
 
                 <label for="dydxPassphrase">dYdX API Passphrase (i.e. 'passphrase'):</label>
-                <input type="text required" id="dydxPassphrase"><br><br>
+                <input type="password" id="dydxPassphrase"><br><br>
 
                 <h4>dYdX Run Environment:</h4>
                 <input type="radio" id="dydxEnvMainnet" name="dydxRunEnvironment">
@@ -86,7 +90,7 @@
                 <input type="text" id="senderEmailAddress"><br><br>
 
                 <label for="senderEmailPassword">Sender email password:</label>
-                <input type="text" id="senderEmailPassword"><br><br>
+                <input type="password" id="senderEmailPassword"><br><br>
 
                 <label for="toEmailAddress">Receiving email address (where to send email alerts):</label>
                 <input type="text" id="toEmailAddress"><br><br>
@@ -100,7 +104,7 @@
                 <h3>Slack Bot Config (only enter if you want to use a slack webhook bot)</h3>
                 
                 <label for="slackWebhookUrl">Slack webhook URL:</label>
-                <input type="text" id="slackWebhookUrl"><br><br>
+                <input type="password" id="slackWebhookUrl"><br><br>
 
             </div>
         </div>
@@ -111,7 +115,7 @@
                 <h3>Discord Bot Config (only enter if you want to use a discord webhook bot)</h3>
                 
                 <label for="discordWebhookUrl">Discord webhook URL:</label>
-                <input type="text" id="discordWebhookUrl"><br><br>
+                <input type="password" id="discordWebhookUrl"><br><br>
 
             </div>
         </div>
@@ -122,10 +126,10 @@
                 <h3>Telegram Bot Config (only enter if you want to use a telegram bot)</h3>
                 
                 <label for="telegramBotToken">Telegram Bot Token:</label>
-                <input type="text" id="telegramBotToken"><br><br>
+                <input type="password" id="telegramBotToken"><br><br>
 
                 <label for="telegramChatId">Telegram Chat ID:</label>
-                <input type="text" id="telegramChatId"><br><br>
+                <input type="password" id="telegramChatId"><br><br>
 
             </div>
         </div>
@@ -133,9 +137,14 @@
         <div>
             <div>
                 <h3>Bot Trigger Leverage (required)</h3>
+                <h4><i>When your account passes this leverage, the bot will send a notification. Values can range from 0x to 25x leveraged.</i></h4>
                     
                 <label for="maxLeverageTrigger">Maximum Leverage Trigger:</label>
-                <input type="text" id="maxLeverageTrigger" value="15" min="0" max="25"><br><br>
+                <input type="text" id="maxLeverageTrigger" value="10" min="0" max="25"><br><br>
+
+                <!-- <label for="maxLeverageTrigger">Maximum Leverage Trigger:</label>
+                <input type="range" min="1" max="25" value="10" step=".1" class="slider" id="maxLeverageTrigger"><br>
+                <span>Leverage Trigger Value: </span><span id="maxLeverageNumberDisplay" class="leverage-val">10</span><br><br> -->
             </div>
         </div>
 

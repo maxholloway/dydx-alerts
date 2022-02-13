@@ -387,3 +387,8 @@ document
             }
         }
     )
+
+var slider = document.getElementById('maxLeverageTrigger')
+slider.onchange = function updateSlider() {
+    document.getElementById("maxLeverageNumberDisplay").innerHTML = this.value
+}
