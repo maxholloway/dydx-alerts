@@ -1,7 +1,7 @@
 # dYdX Alerts Technical Documentation
 
 ## What is dYdX Alerts?
-dYdX alerts is a tool for you to get alerts before your dYdX position is liquidated. All software is [open source](https://github.com/maxholloway/dydx-alerts), and the alert bot is run on users' systems (rather than on a centralized server). This requires that users run their own bot, for which we recommend using a cloud service provider.
+dYdX alerts is a noncustodial tool for you to get alerts before your dYdX position is liquidated. All software is [open source](https://github.com/maxholloway/dydx-alerts), and the alert bot runs on users' systems (rather than on a centralized platform). This requires that users run their own bot, for which we recommend using a cloud service provider.
 
 ## Quick Start
 If you want to run your own dYdX alert bot, follow the "Run from Docker" instructions in the [usage guide](usage.md). You can also watch a video guide for setting up the alerts bot by following along [here](https://www.youtube.com/playlist?list=PLDOwkrVF_nTZ60vUxIFbNoLTnW8APfQrW).
